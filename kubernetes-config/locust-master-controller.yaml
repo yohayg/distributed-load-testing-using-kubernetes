@@ -33,12 +33,14 @@ spec:
     spec:
       containers:
         - name: locust
-          image: gcr.io/cloud-solutions-images/locust-tasks:latest
+          image: gcr.io/rtp-gcp-poc/locust-kafka:latest
           env:
             - name: LOCUST_MODE
               value: master
             - name: TARGET_HOST
-              value: http://workload-simulation-webapp.appspot.com
+              value: https://rtp-gcp-poc.appspot.com
+            - name: SCENARIO_FILE
+              value: locustfile.py
           ports:
             - name: loc-master-web
               containerPort: 8089

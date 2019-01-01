@@ -12,12 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+## Start with a base Python 2.7.8 image
+#FROM ubuntu:14.04
+#
+#RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential libncursesw5-dev libreadline-dev libssl-dev libgdbm-dev libc6-dev libsqlite3-dev libxml2-dev libxslt-dev python python-dev python-setuptools && apt-get clean
+#RUN easy_install locustio pyzmq
 
-# Start with a base Python 2.7.8 image
-FROM python:2.7.8
+FROM hakobera/locust
 
-MAINTAINER Sandeep Parikh <parikhs@google.com>
-
+RUN easy_install pip
 # Add the licenses for third party software and libraries
 ADD licenses /licenses
 

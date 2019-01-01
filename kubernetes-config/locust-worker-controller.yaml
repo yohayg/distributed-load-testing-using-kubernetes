@@ -21,7 +21,7 @@ metadata:
     name: locust
     role: worker
 spec:
-  replicas: 10
+  replicas: 1
   selector:
     name: locust
     role: worker
@@ -33,11 +33,15 @@ spec:
     spec:
       containers:
         - name: locust
-          image: gcr.io/cloud-solutions-images/locust-tasks:latest
+          image: gcr.io/rtp-gcp-poc/locust-kafka:latest
           env:
             - name: LOCUST_MODE
               value: worker
             - name: LOCUST_MASTER
               value: locust-master
             - name: TARGET_HOST
-              value: http://workload-simulation-webapp.appspot.com
+              value: https://rtp-gcp-poc.appspot.com
+            - name: KAFKA_BROKERS
+              value: 35.239.216.32:9092
+            - name: SCENARIO_FILE
+              value: locustfile.py
