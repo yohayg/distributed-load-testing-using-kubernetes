@@ -1,3 +1,8 @@
+### distributed load-testing using kubernetes and locust
+
+This tutorial describes how to distributed load-testing kafka with kubernetes and locust
+
+
 ##### set your shell to GCP #####
 
     gcloud auth login
@@ -8,9 +13,11 @@
 
 ##### create kafka in GCP #####
 
-create kafka from google market
-open kafka for outside: https://stackoverflow.com/questions/32811824/not-able-to-connect-to-kafka-server-on-google-compute-engine-from-local-machine
+create kafka from GCP deployment manager, select Kafka Certified by Bitnami
 
+open kafka for outside connections: https://stackoverflow.com/questions/32811824/not-able-to-connect-to-kafka-server-on-google-compute-engine-from-local-machine
+
+Open firewall rule for kafka
 
 ##### build the new image and submit to GCP #####
 
@@ -32,7 +39,7 @@ open kafka for outside: https://stackoverflow.com/questions/32811824/not-able-to
     kubectl get pods
     kubectl logs -f locust-worker-jdf8d
 
-##### Open locust UI #####
+##### Testing #####
 
     kubectl get svc
 
@@ -43,6 +50,9 @@ login to external ip of locust master and start the test
     kafka-console-consumer --bootstrap-server 35.239.216.32:9092 --topic test --from-beginning
 
 
+##### Cleanup #####
 
+delete the cluster you have created
+delete the kafka from the deployment manager
 
 
