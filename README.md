@@ -8,7 +8,7 @@ Deploy kafka using docker-compose:
 
     git clone git@github.com:wurstmeister/kafka-docker.git
     docker-compose -f docker-compose-single-broker.yml up
-test kafka runs properly:
+Test kafka runs properly:
     
     kafka-console-producer --broker-list 192.168.99.100:9092 --topic test
     kafka-console-consumer --bootstrap-server 192.168.99.100:9092 --topic test --from-beginning
@@ -28,7 +28,7 @@ create kafka from GCP deployment manager, select Kafka Certified by Bitnami
 
 
 ### Configure kafka ###
-open kafka for advertised listeners:
+Open kafka for advertised listeners:
 You must access to the cloud compute VM instance through SSH, then edit the kafka configuration file.
 
     sudo vim /opt/bitnami/kafka/config/server.properties
@@ -80,7 +80,7 @@ Open firewall rule for kafka in GCP on port 9092
 
     kubectl get svc
 
-login to external ip of locust master and start the test
+Login to external ip of locust master and start the test
 
 
 ### Check that messages are arriving ###
@@ -90,7 +90,10 @@ login to external ip of locust master and start the test
 
 ### Cleanup ###
 
-delete the cluster you have created
-delete the kafka from the deployment manager
+Delete the cluster you have created:
+
+    gcloud container clusters create locust-kafka --zone us-central1-a
+    
+Delete the kafka from the deployment manager
 
 
