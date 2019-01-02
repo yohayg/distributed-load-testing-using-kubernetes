@@ -1,4 +1,4 @@
-# Distributed load testing using kubernetes and locust #
+# Distributed load testing of Apache Kafka using kubernetes and locust #
 
 This tutorial describes how to distributed load-testing kafka with kubernetes and locust
 
