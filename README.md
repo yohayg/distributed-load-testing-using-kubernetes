@@ -3,17 +3,10 @@
 This tutorial describes how to distributed load-testing kafka with kubernetes and locust
 
 
-##### set your shell to GCP #####
-
-    gcloud auth login
-    gcloud config set region us-central1
-    gcloud config set zone us-central1-a
-    
-
-
 ##### create kafka in GCP #####
 
 create kafka from GCP deployment manager, select Kafka Certified by Bitnami
+
 
 ##### configure kafka #####
 open kafka for advertised listeners:
@@ -31,8 +24,17 @@ As a last step restart the kafka service
 
 Open firewall rule for kafka in GCP on port 9092
 
+
+##### set your shell to GCP #####
+
+    gcloud auth login
+    gcloud config set region us-central1
+    gcloud config set zone us-central1-a
+    
+
 ##### build the new image and submit to GCP #####
 
+    cd docker-image
     docker build -t gcr.io/rtp-gcp-poc/locust-kafka:latest .
     gcloud builds submit --tag gcr.io/rtp-gcp-poc/locust-kafka:latest .
 
@@ -42,20 +44,24 @@ Open firewall rule for kafka in GCP on port 9092
 
     gcloud container clusters get-credentials  locust-test --zone us-central1-a --project rtp-gcp-poc
 
+
 ##### deploy locust using k8s #####
 
     kubectl create -f ./
+
 
 ##### open logs of the worker #####
 
     kubectl get pods
     kubectl logs -f locust-worker-jdf8d
 
+
 ##### Testing #####
 
     kubectl get svc
 
 login to external ip of locust master and start the test
+
 
 ##### Check that messages are arriving #####
 
