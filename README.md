@@ -41,8 +41,6 @@ As a last step restart the kafka service
 
     sudo /opt/bitnami/ctlscript.sh restart
 
-Open firewall rule for kafka in GCP on port 9092
-
 
 ### Set your shell to GCP ###
 
