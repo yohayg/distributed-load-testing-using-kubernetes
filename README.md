@@ -22,14 +22,22 @@ Run locust:
 
 ## Testing in GCP with K8s ##
 
+### Set your shell to GCP ###
+
+    gcloud auth login
+    gcloud config set region us-central1
+    gcloud config set zone us-central1-a
+
 ### Create kafka in GCP ###
 
-create kafka from GCP deployment manager, select Kafka Certified by Bitnami
+Create kafka from [GCP Cloud Deployment Manager](https://console.cloud.google.com/marketplace/details/bitnami-launchpad/kafka), select Kafka Certified by Bitnami
 
 
 ### Configure kafka ###
 Open kafka for advertised listeners:
 You must access to the cloud compute VM instance through SSH, then edit the kafka configuration file.
+
+    gcloud compute --project <PROJECT_ID> ssh --zone "us-central1-a" <KAFKA_VM_NAME>
 
     sudo vim /opt/bitnami/kafka/config/server.properties
 
@@ -40,26 +48,19 @@ Uncomment the line # advertised.listeners=PLAINTEXT://:9092 and replace with
 As a last step restart the kafka service
 
     sudo /opt/bitnami/ctlscript.sh restart
-
-
-### Set your shell to GCP ###
-
-    gcloud auth login
-    gcloud config set region us-central1
-    gcloud config set zone us-central1-a
     
 
 ### Build the new image and submit to GCP ###
 
     cd docker-image
-    docker build -t gcr.io/rtp-gcp-poc/locust-kafka:latest .
-    gcloud builds submit --tag gcr.io/rtp-gcp-poc/locust-kafka:latest .
+    docker build -t gcr.io/<PROJECT_ID>/locust-kafka-client:latest .
+    gcloud builds submit --tag gcr.io/<PROJECT_ID>/locust-kafka-client:latest .
 
 ### Create GKE cluster ###
 
-    gcloud container clusters create locust-kafka --zone us-central1-a
+    gcloud container clusters create locust-cluster --zone us-central1-a
 
-    gcloud container clusters get-credentials  locust-test --zone us-central1-a --project rtp-gcp-poc
+    gcloud container clusters get-credentials  locust-cluster --zone us-central1-a --project <PROJECT_ID>
 
 
 ### Deploy locust using k8s ###
@@ -71,7 +72,7 @@ As a last step restart the kafka service
 ### Open logs of the worker ###
 
     kubectl get pods
-    kubectl logs -f locust-worker-jdf8d
+    kubectl logs -f locust-worker-<GENERATED_ID>
 
 
 ### Testing ###
@@ -83,15 +84,15 @@ Login to external ip of locust master and start the test
 
 ### Check that messages are arriving ###
 
-    kafka-console-consumer --bootstrap-server 35.239.216.32:9092 --topic test --from-beginning
+    kafka-console-consumer --bootstrap-server <KAFKA_VM_EXTERNAL_IP>:9092 --topic test --from-beginning
 
 
 ### Cleanup ###
 
 Delete the cluster you have created:
 
-    gcloud container clusters create locust-kafka --zone us-central1-a
+    gcloud container clusters create locust-cluster --zone us-central1-a
     
-Delete the kafka from the deployment manager
+Delete the kafka server from [GCP Cloud Deployment Manager](https://console.cloud.google.com/dm/deployments)
 
-
+Delete the locust-kafka-client docker image from  [GCP Container Registry](https://console.cloud.google.com/gcr/images/)
