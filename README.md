@@ -3,22 +3,56 @@
 This tutorial describes how to distributed load-testing kafka with kubernetes and locust
 
 
+## Setup ##
+
+    mkvirtualenv -p /usr/bin/python2.7 distributed-load-testing-using-kubernetes
+    
+
 ## Testing locally ##
+
+Create docker machine:
+
+    docker-machine create --driver virtualbox default
+    eval $(docker-machine env default)
+    
+Check the IP (It should be: 192.168.99.100)
+
+    docker-machine ip default
+    
 Deploy kafka using docker-compose:
 
     git clone git@github.com:wurstmeister/kafka-docker.git
+
+If your docker machine IP was not 192.168.99.100 then you will need to change it in the yml
+    
     docker-compose -f docker-compose-single-broker.yml up
+
 Test kafka runs properly:
     
     kafka-console-producer --broker-list 192.168.99.100:9092 --topic test
     kafka-console-consumer --bootstrap-server 192.168.99.100:9092 --topic test --from-beginning
+
+### Testing locally using python ###
 
 Export your kafka broker before running locust:
 
     export KAFKA_BROKERS=192.168.99.100:9092
 Run locust:
 
-    locust -f locust-tasks/locustfile.py
+    mkvirtualenv -p /usr/bin/python2.7 distributed-load-testing-using-kubernetes
+    pip install -r requirements.txt
+    locust -f docker-image/locust-tasks/locustfile.py
+
+Open your browser at [locust](http://localhost:8089/)
+
+### Testing locally using docker ###
+
+    cd docker-image
+    docker build -t gcr.io/rtp-gcp-poc/locust-kafka:latest .
+    docker run -d --name locust -e LOCUST_MODE=standalone -e SCENARIO_FILE=/locust-tasks/locustfile.py -e KAFKA_BROKERS=192.168.99.100:9092 -p 8089:8089 gcr.io/rtp-gcp-poc/locust-kafka:latest
+ 
+Open your browser at [locust](http://192.168.99.100:8089/)
+
 
 ## Testing in GCP with K8s ##
 
