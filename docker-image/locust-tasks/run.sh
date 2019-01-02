@@ -15,8 +15,13 @@
 # limitations under the License.
 
 
+#docker build -t gcr.io/rtp-gcp-poc/locust-kafka:latest .
+#docker run -d --name locust -e LOCUST_MODE=standalone -e SCENARIO_FILE=/locust-tasks/locustfile.py -e KAFKA_BROKERS=35.239.216.32:9092 -p 8089:8089 gcr.io/rtp-gcp-poc/locust-kafka:latest
+
+
 LOCUST="/usr/local/bin/locust"
-LOCUS_OPTS="-f /locust-tasks/locustfile.py --host=$TARGET_HOST"
+LOCUS_OPTS="-f $SCENARIO_FILE --host=$TARGET_HOST"
+#LOCUS_OPTS="-f /locust-tasks/locustfile.py --host=$TARGET_HOST"
 LOCUST_MODE=${LOCUST_MODE:-standalone}
 
 if [[ "$LOCUST_MODE" = "master" ]]; then

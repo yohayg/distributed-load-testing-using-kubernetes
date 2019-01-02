@@ -1,14 +1,33 @@
-### distributed load-testing using kubernetes and locust
+# Distributed load testing using kubernetes and locust #
 
 This tutorial describes how to distributed load-testing kafka with kubernetes and locust
 
 
-##### create kafka in GCP #####
+## Testing locally ##
+Deploy kafka using docker-compose:
+
+    git clone git@github.com:wurstmeister/kafka-docker.git
+    docker-compose -f docker-compose-single-broker.yml up
+test kafka runs properly:
+    
+    kafka-console-producer --broker-list 192.168.99.100:9092 --topic test
+    kafka-console-consumer --bootstrap-server 192.168.99.100:9092 --topic test --from-beginning
+
+Export your kafka broker before running locust:
+
+    export KAFKA_BROKERS=192.168.99.100:9092
+Run locust:
+
+    locust -f locust-tasks/locustfile.py
+
+## Testing in GCP with K8s ##
+
+### Create kafka in GCP ###
 
 create kafka from GCP deployment manager, select Kafka Certified by Bitnami
 
 
-##### configure kafka #####
+### Configure kafka ###
 open kafka for advertised listeners:
 You must access to the cloud compute VM instance through SSH, then edit the kafka configuration file.
 
@@ -25,51 +44,51 @@ As a last step restart the kafka service
 Open firewall rule for kafka in GCP on port 9092
 
 
-##### set your shell to GCP #####
+### Set your shell to GCP ###
 
     gcloud auth login
     gcloud config set region us-central1
     gcloud config set zone us-central1-a
     
 
-##### build the new image and submit to GCP #####
+### Build the new image and submit to GCP ###
 
     cd docker-image
     docker build -t gcr.io/rtp-gcp-poc/locust-kafka:latest .
     gcloud builds submit --tag gcr.io/rtp-gcp-poc/locust-kafka:latest .
 
-##### Create GKE cluster #####
+### Create GKE cluster ###
 
     gcloud container clusters create locust-kafka --zone us-central1-a
 
     gcloud container clusters get-credentials  locust-test --zone us-central1-a --project rtp-gcp-poc
 
 
-##### deploy locust using k8s #####
+### Deploy locust using k8s ###
 
     cd kubernetes-config
     kubectl create -f ./
 
 
-##### open logs of the worker #####
+### Open logs of the worker ###
 
     kubectl get pods
     kubectl logs -f locust-worker-jdf8d
 
 
-##### Testing #####
+### Testing ###
 
     kubectl get svc
 
 login to external ip of locust master and start the test
 
 
-##### Check that messages are arriving #####
+### Check that messages are arriving ###
 
     kafka-console-consumer --bootstrap-server 35.239.216.32:9092 --topic test --from-beginning
 
 
-##### Cleanup #####
+### Cleanup ###
 
 delete the cluster you have created
 delete the kafka from the deployment manager

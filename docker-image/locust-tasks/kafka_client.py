@@ -11,7 +11,8 @@ class KafkaClient:
         print("kafka topics:")
         print '[%s]' % ', '.join(map(str, kafka_brokers))
         if kafka_brokers is None:
-            kafka_brokers = ['192.168.99.100:9092']
+            kafka_brokers = ['kafka:9092']
+
         self.producer = KafkaProducer(bootstrap_servers=kafka_brokers)
 
     def __handle_success(self, *arguments, **kwargs):
@@ -20,7 +21,7 @@ class KafkaClient:
         try:
             record_metadata = kwargs["future"].get(timeout=1)
 
-            request_data = dict(request_type="ENQUEUE",
+            request_data = dict(request_type="send",
                                 name=record_metadata.topic,
                                 response_time=elapsed_time,
                                 response_length=record_metadata.serialized_value_size)
@@ -35,7 +36,7 @@ class KafkaClient:
         end_time = time.time()
         elapsed_time = int((end_time - kwargs["start_time"]) * 1000)
 
-        request_data = dict(request_type="ENQUEUE", name=kwargs["topic"], response_time=elapsed_time,
+        request_data = dict(request_type="send", name=kwargs["topic"], response_time=elapsed_time,
                             exception=arguments[0])
 
         self.__fire_failure(**request_data)

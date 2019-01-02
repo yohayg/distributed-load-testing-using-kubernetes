@@ -2,8 +2,10 @@ import os
 import random
 import string
 import time
+import uuid
+from datetime import datetime
 
-from locust import TaskSet, task, events, Locust
+from locust import TaskSet, task, events, Locust, HttpLocust
 
 from additional_handlers import additional_success_handler, additional_failure_handler
 from kafka_client import KafkaClient
@@ -11,7 +13,7 @@ from kafka_client import KafkaClient
 WORK_DIR = os.path.dirname(__file__)
 
 # read kafka brokers from config
-KAFKA_BROKERS = os.getenv("KAFKA_BROKERS", "35.239.216.32:9092").split(",")
+KAFKA_BROKERS = os.getenv("KAFKA_BROKERS", "kafka:9092").split(",")
 
 # read other environment variables
 QUIET_MODE = True if os.getenv("QUIET_MODE", "true").lower() in ['1', 'true', 'yes'] else False
@@ -33,6 +35,10 @@ class KafkaLocust(Locust):
 
 
 class KafkaBehaviour(TaskSet):
+    _device_id = None
+
+    def on_start(self):
+        self._device_id = str(uuid.uuid4())
 
     def random_message(self, min_length=32, max_length=128):
         return ''.join(random.choice(string.ascii_uppercase) for _ in range(random.randrange(min_length, max_length)))
@@ -44,12 +50,12 @@ class KafkaBehaviour(TaskSet):
     def send_msg(self):
         self.client.send("test", message=self.timestamped_message())
 
-    @task(2)
+    @task(10)
     def send_msg2(self):
         self.client.send("test", message=self.timestamped_message(), key="key")
 
 
-class KafkaUser(KafkaLocust):
+class KafkaActivitiesLocust(KafkaLocust):
     """
     Locust user class that pushes messages to Kafka
     """
