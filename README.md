@@ -47,6 +47,7 @@ Open firewall rule for kafka in GCP on port 9092
 
 ##### deploy locust using k8s #####
 
+    cd kubernetes-config
     kubectl create -f ./
 
 
