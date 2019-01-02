@@ -1,7 +1,13 @@
 # Distributed load testing of Apache Kafka using kubernetes and locust #
 
-This tutorial describes how to distributed load-testing kafka with kubernetes and locust
+This tutorial describes how to distributed load testing kafka with kubernetes and locust
 
+
+Prerequisites:
+
+* [Docker](https://download.docker.com/mac/stable/Docker.dmg)
+* python 2.7, pip, virtualenv
+* kafka-client ```brew install kafka```
 
 ## Setup ##
 
@@ -23,11 +29,12 @@ Deploy kafka using docker-compose:
 
     git clone git@github.com:wurstmeister/kafka-docker.git
 
-If your docker machine IP was not 192.168.99.100 then you will need to change it in the yml
+If your docker machine IP was not 192.168.99.100 then you will need to change it in the yml and then follow this IP 
+with the rest of the tutorial
     
     docker-compose -f docker-compose-single-broker.yml up
 
-Test kafka runs properly:
+Test that kafka runs properly:
     
     kafka-console-producer --broker-list 192.168.99.100:9092 --topic test
     kafka-console-consumer --bootstrap-server 192.168.99.100:9092 --topic test --from-beginning
@@ -45,14 +52,25 @@ Run locust:
 
 Open your browser at [locust](http://localhost:8089/)
 
+When done clean your python env:
+    
+    deactivate
+    rm -Rf ~/.virtualenvs/distributed-load-testing-using-kubernetes
+
 ### Testing locally using docker ###
 
-    cd docker-image
-    docker build -t gcr.io/rtp-gcp-poc/locust-kafka:latest .
-    docker run -d --name locust -e LOCUST_MODE=standalone -e SCENARIO_FILE=/locust-tasks/locustfile.py -e KAFKA_BROKERS=192.168.99.100:9092 -p 8089:8089 gcr.io/rtp-gcp-poc/locust-kafka:latest
- 
-Open your browser at [locust](http://192.168.99.100:8089/)
+Open new command shell (otherwise the locust will start on docker-machine default with port 192.168.99.100)
 
+    cd docker-image
+    docker build -t gcr.io/<PROJECT_ID>/locust-kafka-client:latest .
+    docker run -d --name locust -e LOCUST_MODE=standalone -e SCENARIO_FILE=/locust-tasks/locustfile.py -e KAFKA_BROKERS=192.168.99.100:9092 -p 8089:8089 gcr.io/<PROJECT_ID>/locust-kafka-client:latest
+ 
+Open your browser at [locust docker-machine](http://192.168.99.100:8089/) or [locust localhost](http://localhost:8089/)
+
+When done clean your docker env:
+
+    docker kill $(docker ps | grep locust | awk '{print $1;}') && docker rm $(docker ps -a | grep locust | awk '{print $1;}')
+    docker images -a |  grep locust | awk '{print $3}' | xargs docker rmi -f
 
 ## Testing in GCP with K8s ##
 
