@@ -15,9 +15,21 @@ This tutorial describes how to distributed load-testing kafka with kubernetes an
 
 create kafka from GCP deployment manager, select Kafka Certified by Bitnami
 
-open kafka for outside connections: https://stackoverflow.com/questions/32811824/not-able-to-connect-to-kafka-server-on-google-compute-engine-from-local-machine
+##### configure kafka #####
+open kafka for advertised listeners:
+You must access to the cloud compute VM instance through SSH, then edit the kafka configuration file.
 
-Open firewall rule for kafka
+    sudo vim /opt/bitnami/kafka/config/server.properties
+
+Uncomment the line # advertised.listeners=PLAINTEXT://:9092 and replace with       
+
+    advertised.listeners=PLAINTEXT://[instance_public_id_address]:9092
+
+As a last step restart the kafka service
+
+    sudo /opt/bitnami/ctlscript.sh restart
+
+Open firewall rule for kafka in GCP on port 9092
 
 ##### build the new image and submit to GCP #####
 
