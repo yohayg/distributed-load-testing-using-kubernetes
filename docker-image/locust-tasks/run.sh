@@ -16,7 +16,7 @@
 
 
 #docker build -t gcr.io/rtp-gcp-poc/locust-kafka:latest .
-#docker run -d --name locust -e LOCUST_MODE=standalone -e SCENARIO_FILE=/locust-tasks/locustfile.py -e KAFKA_BROKERS=35.239.216.32:9092 -p 8089:8089 gcr.io/rtp-gcp-poc/locust-kafka:latest
+#docker run -d --name locust -e LOCUST_MODE=standalone -e SCENARIO_FILE=/locust-tasks/locustfile.py -e KAFKA_BROKERS=192.168.99.100:9092 -p 8089:8089 gcr.io/rtp-gcp-poc/locust-kafka:latest
 
 
 LOCUST="/usr/local/bin/locust"
