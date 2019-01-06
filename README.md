@@ -82,7 +82,7 @@ When done clean your docker env:
 
 ### Create kafka in GCP ###
 
-Create kafka from [GCP Cloud Deployment Manager](https://console.cloud.google.com/marketplace/details/bitnami-launchpad/kafka), select Kafka Certified by Bitnami
+Delpoy kafka from [GCP Cloud Deployment Manager](https://console.cloud.google.com/marketplace/details/click-to-deploy-images/kafka)
 
 
 ### Configure kafka ###
@@ -91,7 +91,7 @@ You must access to the cloud compute VM instance through SSH, then edit the kafk
 
     gcloud compute --project <PROJECT_ID> ssh --zone "us-central1-a" <KAFKA_VM_NAME>
 
-    sudo vim /opt/bitnami/kafka/config/server.properties
+    sudo vim /opt/kafka/config/server.properties
 
 Uncomment the line # advertised.listeners=PLAINTEXT://:9092 and replace with       
 
@@ -99,7 +99,7 @@ Uncomment the line # advertised.listeners=PLAINTEXT://:9092 and replace with
 
 As a last step restart the kafka service
 
-    sudo /opt/bitnami/ctlscript.sh restart
+    sudo systemctl restart kafka
     
 
 ### Build the new image and submit to GCP ###
