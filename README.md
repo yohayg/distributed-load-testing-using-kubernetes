@@ -143,7 +143,7 @@ Login to external ip of locust master and start the test
 
 Delete the cluster you have created:
 
-    gcloud container clusters create locust-cluster --zone us-central1-a
+    gcloud container clusters delete locust-cluster --zone us-central1-a
     
 Delete the kafka server from [GCP Cloud Deployment Manager](https://console.cloud.google.com/dm/deployments)
 
