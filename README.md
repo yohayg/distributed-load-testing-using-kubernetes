@@ -86,6 +86,15 @@ Delpoy kafka from [GCP Cloud Deployment Manager](https://console.cloud.google.co
 
 
 ### Configure kafka ###
+
+Add new firewall rule tag:
+
+    gcloud compute firewall-rules create kafka-locust --allow tcp:9092 --target-tags kafka-locust
+    
+Assign the rule to the Kafka instance:
+
+    gcloud compute instances add-tags <KAFKA_VM_NAME> --tags kafka-locust --zone us-central1-a
+ 
 Open kafka for advertised listeners:
 You must access to the cloud compute VM instance through SSH, then edit the kafka configuration file.
 
@@ -118,6 +127,12 @@ As a last step restart the kafka service
 ### Deploy locust using k8s ###
 
     cd kubernetes-config
+    
+Set the Kafka external IP:
+Open kubernetes-config/locust-worker-controller.yaml and replace KAFKA_EXTERNAL_IP with the Kafka external IP address.
+
+Deploy the environment:
+    
     kubectl create -f ./
 
 
@@ -129,7 +144,7 @@ As a last step restart the kafka service
 
 ### Testing ###
 
-    kubectl get svc
+    kubectl get svc locust-master
 
 Login to external ip of locust master and start the test
 
@@ -139,8 +154,27 @@ Login to external ip of locust master and start the test
     kafka-console-consumer --bootstrap-server <KAFKA_VM_EXTERNAL_IP>:9092 --topic test --from-beginning
 
 
+### Deploying new code to GCP ###
+
+You will need to delete the topic since it contains old messages (Optional)
+
+    kafka-topics --zookeeper <KAFKA_VM_EXTERNAL_IP>:2181 --delete --topic test
+
+Roll out new image:
+
+        docker build -t gcr.io/rtp-gcp-poc/locust-kafka-client:latest .
+        gcloud builds submit --tag gcr.io/rtp-gcp-poc/locust-kafka-client:latest .
+        kubectl rolling-update locust-worker --image gcr.io/rtp-gcp-poc/locust-kafka-client:latest --image-pull-policy Always
+        kubectl rolling-update locust-master --image gcr.io/rtp-gcp-poc/locust-kafka-client:latest --image-pull-policy Always
+
+Go to locust UI, Stop existing test and run it again.
+
 ### Cleanup ###
 
+Delete the firewall rule:
+
+    gcloud compute firewall-rules delete kafka-locust
+    
 Delete the cluster you have created:
 
     gcloud container clusters delete locust-cluster --zone us-central1-a

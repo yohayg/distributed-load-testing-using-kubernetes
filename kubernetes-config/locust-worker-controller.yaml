@@ -33,7 +33,8 @@ spec:
     spec:
       containers:
         - name: locust
-          image: gcr.io/rtp-gcp-poc/locust-kafka:latest
+          image: gcr.io/rtp-gcp-poc/locust-kafka-client:latest
+          imagePullPolicy: Always
           env:
             - name: LOCUST_MODE
               value: worker
@@ -42,6 +43,6 @@ spec:
             - name: TARGET_HOST
               value: https://rtp-gcp-poc.appspot.com
             - name: KAFKA_BROKERS
-              value: 35.239.216.32:9092
+              value: KAFKA_EXTERNAL_IP:9092
             - name: SCENARIO_FILE
-              value: locustfile.py
+              value: /locust-tasks/locustfile.py
