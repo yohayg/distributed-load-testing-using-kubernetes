@@ -104,12 +104,17 @@ You must access to the cloud compute VM instance through SSH, then edit the kafk
 
 Uncomment the line # advertised.listeners=PLAINTEXT://:9092 and replace with       
 
-    advertised.listeners=PLAINTEXT://[instance_public_id_address]:9092
+    advertised.listeners=PLAINTEXT://<KAFKA_VM_EXTERNAL_IP>:9092
 
 As a last step restart the kafka service
 
     sudo systemctl restart kafka
+
+Test that kafka runs properly:
     
+    kafka-console-producer --broker-list <KAFKA_VM_EXTERNAL_IP>:9092 --topic test
+    kafka-console-consumer --bootstrap-server <KAFKA_VM_EXTERNAL_IP>:9092 --topic test --from-beginning
+
 
 ### Build the new image and submit to GCP ###
 
