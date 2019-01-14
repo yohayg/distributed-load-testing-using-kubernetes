@@ -174,7 +174,8 @@ Roll out new image:
 
 Go to locust UI, Stop existing test and run it again.
 
-Scaling worers:
+
+### Scaling worers ###
 
     kubectl scale --replicas=20 replicationcontrollers locust-worker
 
