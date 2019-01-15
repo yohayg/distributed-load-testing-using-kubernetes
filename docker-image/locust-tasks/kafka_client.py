@@ -9,7 +9,7 @@ class KafkaClient:
     def __init__(self, kafka_brokers=None):
         print("creating message sender with params: " + str(locals()))
         print("kafka topics:")
-        print '[%s]' % ', '.join(map(str, kafka_brokers))
+        # print '[%s]' % ', '.join(map(str, kafka_brokers))
         if kafka_brokers is None:
             kafka_brokers = ['kafka:9092']
 

@@ -38,9 +38,7 @@ spec:
           env:
             - name: LOCUST_MODE
               value: master
-            - name: TARGET_HOST
-              value: https://rtp-gcp-poc.appspot.com
-            - name: SCENARIO_FILE
+            - name: LOCUST_FILE
               value: /locust-tasks/locustfile.py
           ports:
             - name: loc-master-web

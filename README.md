@@ -63,7 +63,7 @@ Open new command shell (otherwise the locust will start on docker-machine defaul
 
     cd docker-image
     docker build -t gcr.io/<PROJECT_ID>/locust-kafka-client:latest .
-    docker run -d --name locust -e LOCUST_MODE=standalone -e SCENARIO_FILE=/locust-tasks/locustfile.py -e KAFKA_BROKERS=192.168.99.100:9092 -p 8089:8089 gcr.io/<PROJECT_ID>/locust-kafka-client:latest
+    docker run --rm  -e  LOCUST_MODE=standalone -e LOCUST_FILE=/locust-tasks/locustfile.py -e KAFKA_BROKERS=192.168.99.100:9092  -p 8089:8089 gcr.io/<PROJECT_ID>/locust-kafka-client
  
 Open your browser at [locust docker-machine](http://192.168.99.100:8089/) or [locust localhost](http://localhost:8089/)
 
