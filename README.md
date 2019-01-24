@@ -8,6 +8,7 @@ Prerequisites:
 * [Docker](https://download.docker.com/mac/stable/Docker.dmg)
 * python 2.7, pip, virtualenv
 * kafka-client ```brew install kafka```
+* kubectl ```brew install kubernetes-cli```
 
 ## Setup ##
 
