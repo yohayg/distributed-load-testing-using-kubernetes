@@ -1,0 +1,46 @@
+# Copyright 2015 Google Inc. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+
+kind: ReplicationController
+apiVersion: v1
+metadata:
+  name: locust-worker
+  labels:
+    name: locust
+    role: worker
+spec:
+  replicas: 1
+  selector:
+    name: locust
+    role: worker
+  template:
+    metadata:
+      labels:
+        name: locust
+        role: worker
+    spec:
+      containers:
+        - name: locust
+          image: gcr.io/rtp-gcp-poc/locust-postgres-client:latest
+          imagePullPolicy: Always
+          env:
+            - name: LOCUST_MODE
+              value: slave
+            - name: LOCUST_MASTER
+              value: locust-master
+            - name: POSTGRES_CONNECTION_STRING
+              value: postgres://postgres:mysecretpassword@POSTGRES_EXTERNAL_IP:5432/postgres
+            - name: LOCUST_FILE
+              value: /locust-tasks/postgres_locustfile.py
